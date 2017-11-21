@@ -1,0 +1,3 @@
+target 'YLEmojiLabel' do
+  pod 'YYText'
+end

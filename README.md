@@ -67,4 +67,6 @@ NSTextCheckingTypePhoneNumber:电话
 -   表情解析，通过key-value（表情key-表情图片名）的plist文件，生成正则表达式，然后在检索目标文本，将表情key解析为UIImage图片。
 -   如需扩展只需要将对应的plist配置好，并将资源图添加好即可。
 
+## Author
 
+yuxueliang, xueliangwd@163.com

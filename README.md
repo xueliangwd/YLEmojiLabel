@@ -56,9 +56,9 @@ Example:
 ### YYTextRichParser
 
 通过传入NSTextCheckingType 来检测解析对应类型，并将对应区域添加高亮和点击事件。
- <br\>
-已实现类型：<br\>
-NSTextCheckingTypeLink :链接网址、邮箱 <br\>
+ <br/>
+已实现类型：<br/>
+NSTextCheckingTypeLink :链接网址、邮箱 <br/>
 NSTextCheckingTypePhoneNumber:电话
 
 

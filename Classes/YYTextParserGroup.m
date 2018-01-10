@@ -13,6 +13,12 @@
 
 @implementation YYTextParserGroup
 
+/**
+ 默认返回一个检测表情、邮箱、电话、网址的ParserGroup
+
+ @param font 目标文本显示字体
+ @return YYTextParserGroup对象
+ */
 +(instancetype)textParsesGroupChatWithFont:(UIFont*)font{
     
     YYTextParserGroup * parserGroup = [YYTextParserGroup new];
@@ -36,6 +42,14 @@
     
     return parserGroup;
 }
+
+/**
+ 遍历 parsers
+
+ @param text 目标文本
+ @param selectedRange 需要检查的range范围
+ @return 检测结果是否有异常
+ */
 - (BOOL)parseText:(NSMutableAttributedString *)text selectedRange:(NSRangePointer)selectedRange {
     BOOL changed = NO;
     for (id<YYTextParser>parser in _parsers) {
@@ -46,6 +60,11 @@
     return changed;
 }
 
+/**
+ 从plist获取 表情-图片名 的NSDictionary
+
+ @return 返回 表情：图片名（key-value）的NSDictionary
+ */
 - (NSDictionary *)emojiDictionary {
     static NSDictionary *emojiDictionary = nil;
     static dispatch_once_t onceToken;
@@ -70,7 +89,7 @@
     [text yy_removeAttributesInRange:NSMakeRange(0, text.length)];
     text.yy_font = _font;
     if (!_detector) return NO;
-    
+    //检测目标文本中符合类型的 文本段（NSTextCheckingResult）
     NSArray *matches = [_detector matchesInString:text.string options:NSMatchingReportProgress range:NSMakeRange(0, text.string.length)];
     if(!matches.count) return NO;
     __weak typeof(self) weakSelf = self;
@@ -92,7 +111,7 @@
     return YES;
     
 }
-//高亮区点击事件
+//高亮区点击事件 TODO：如需扩展请在这里不全新增类型对应的点击事件 
 -(void)openUrlWithCheckingResult:(NSTextCheckingResult *)result{
     NSURL *callUrl = nil;
     switch (result.resultType) {
@@ -136,6 +155,11 @@ dispatch_semaphore_signal(_lock);
     LOCK(NSDictionary *mapper = _mapper); return mapper;
 }
 
+/**
+ 通过表情plist文件拼接成一个正则表达式，用来检测目标文本
+
+ @param emoticonMapper 表情-图片名 的NSDictionary
+ */
 - (void)setEmoticonMapper:(NSDictionary *)emoticonMapper {
     LOCK(
          _mapper = emoticonMapper.copy;
@@ -168,6 +192,7 @@ dispatch_semaphore_signal(_lock);
 }
 
 // correct the selected range during text replacement
+// 重写YYText父类，计算 表情key替换成表情图片后的range；因为表情字符替换成表情图后，range会发生增减，需重新计算
 - (NSRange)_replaceTextInRange:(NSRange)range withLength:(NSUInteger)length selectedRange:(NSRange)selectedRange {
     // no change
     if (range.length == length) return selectedRange;
@@ -194,6 +219,13 @@ dispatch_semaphore_signal(_lock);
     return selectedRange;
 }
 
+/**
+ 检测解析表情符
+
+ @param text 目标富文本
+ @param range 需检测目标文本的Range
+ @return 是否有异常
+ */
 - (BOOL)parseText:(NSMutableAttributedString *)text selectedRange:(NSRangePointer)range {
     if (text.length == 0) return NO;
     
